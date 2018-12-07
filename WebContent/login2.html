@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>登录</title>
+<meta name="description"
+	content="particles.js is a lightweight JavaScript library for creating particles.">
+<meta name="author" content="Vincent Garreau" />
+<meta name="viewport"
+	content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<link rel="stylesheet" media="screen" href="css/style.css">
+<link rel="stylesheet" type="text/css" href="css/reset.css" />
+<script type="text/javascript" src="./js/jquery-3.3.1.min.js"></script>
+<script type="text/javascript"
+	src="https://res.wx.qq.com/open/js/jweixin-1.2.0.js"></script>
+<script type="text/javascript">
+var code="wx3636754f0b243b3f"
+	var timestamp=new Date().getTime();
+wx.config({
+    beta: true,// 必须这么写，否则wx.invoke调用形式的jsapi会有问题
+    debug: true, // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
+    appId: code, // 必填，企业微信的corpID
+    timestamp: timestamp, // 必填，生成签名的时间戳
+    nonceStr: '', // 必填，生成签名的随机串
+    signature: '',// 必填，签名，见 附录-JS-SDK使用权限签名算法
+    jsApiList: [] // 必填，需要使用的JS接口列表，所有JS接口列表见附录2
+});
+
+wx.agentConfig({
+    corpid: code, // 必填，企业微信的corpid，必须与当前登录的企业一致
+    agentid: '5', // 必填，企业微信的应用id
+    timestamp: timestamp, // 必填，生成签名的时间戳
+    nonceStr: '', // 必填，生成签名的随机串
+    signature: '',// 必填，签名，见附录1
+    jsApiList: [], //必填
+    success: function(res) {
+        // 回调
+    },
+    fail: function(res) {
+        if(res.errMsg.indexOf('function not exist') > -1){
+            alert('版本过低请升级')
+        }
+    }
+});
+</script>
+</head>
+<body>
+
+	<div id="particles-js">
+		<div class="login">
+			<div class="login-top">登录</div>
+			<div class="login-center clearfix">
+				<div class="login-center-img">
+					<img src="img/name.png" />
+				</div>
+				<div class="login-center-input">
+					<input type="text" id="uname" name="" value=""
+						placeholder="请输入您的用户名" onfocus="this.placeholder=''"
+						onblur="this.placeholder='请输入您的用户名'" />
+					<div class="login-center-input-text">用户名</div>
+				</div>
+			</div>
+			<div class="login-center clearfix">
+				<div class="login-center-img">
+					<img src="img/password.png" />
+				</div>
+				<div class="login-center-input">
+					<input type="password" id="pwd" name="" value=""
+						placeholder="请输入您的密码" onfocus="this.placeholder=''"
+						onblur="this.placeholder='请输入您的密码'" />
+					<div class="login-center-input-text">密码</div>
+				</div>
+			</div>
+			<div class="login-button">登录</div>
+		</div>
+		<div class="sk-rotating-plane"></div>
+	</div>
+
+	<!-- scripts -->
+	<script src="js/particles.min.js"></script>
+	<script src="js/app.js"></script>
+	<script type="text/javascript">
+		function hasClass(elem, cls) {
+			cls = cls || '';
+			if (cls.replace(/\s/g, '').length == 0)
+				return false; //当cls没有参数时，返回false
+			return new RegExp(' ' + cls + ' ').test(' ' + elem.className + ' ');
+		}
+
+		function addClass(ele, cls) {
+			if (!hasClass(ele, cls)) {
+				ele.className = ele.className == '' ? cls : ele.className + ' '
+						+ cls;
+			}
+		}
+
+		function removeClass(ele, cls) {
+			if (hasClass(ele, cls)) {
+				var newClass = ' ' + ele.className.replace(/[\t\r\n]/g, '')
+						+ ' ';
+				while (newClass.indexOf(' ' + cls + ' ') >= 0) {
+					newClass = newClass.replace(' ' + cls + ' ', ' ');
+				}
+				ele.className = newClass.replace(/^\s+|\s+$/g, '');
+			}
+		}
+
+		document.querySelector(".login-button").onclick = function() {
+			/* 	addClass(document.querySelector(".login"), "active");
+				setTimeout(
+						function() {
+							addClass(document.querySelector(".sk-rotating-plane"),
+									"active")
+							document.querySelector(".login").style.display = "none"
+						}, 500)
+				setTimeout(function() {
+					removeClass(document.querySelector(".login"), "active")
+					removeClass(document.querySelector(".sk-rotating-plane"),
+							"active")
+					document.querySelector(".login").style.display = "block"
+					alert("登录成功")
+				}, 700) */
+			var uid = $("#uname").val();
+			var pwd = $("#pwd").val();
+			startLogin(uid, pwd);
+		}
+		function startLogin(uid, pwd) {
+			addClass(document.querySelector(".login"), "active");
+			addClass(document.querySelector(".sk-rotating-plane"), "active");
+			document.querySelector(".login").style.display = "none";
+
+			var url = "./LoginServlet";
+			var param = "uid=" + encodeURIComponent(uid);
+			param += "&pwd=" + encodeURIComponent(pwd);
+			$.ajax({
+				type : 'POST',
+				url : url,
+				data : param,
+				dataType : "text",
+				success : function(data) {
+					console.log("loginResult:" + data);
+
+					removeClass(document.querySelector(".login"), "active");
+					removeClass(document.querySelector(".sk-rotating-plane"),
+							"active");
+					document.querySelector(".login").style.display = "block";
+					if ("1" == data) {
+						window.location.href="./Search3C.jsp";
+					} else {
+						alert("登录失败！！！");
+					}
+				},
+				error : function(resp, code, msg) {
+					alert("登录失败！！！," + msg);
+					removeClass(document.querySelector(".login"), "active");
+					removeClass(document.querySelector(".sk-rotating-plane"),
+							"active");
+					document.querySelector(".login").style.display = "block";
+				}
+			});
+		}
+	</script>
+</body>
+</html>
