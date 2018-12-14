@@ -13,9 +13,54 @@
 <meta name="viewport"
 	content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no">
 <title>我的品牌</title>
-
+<script type="text/javascript" src="./js/jquery-3.3.1.min.js"></script>
 <script type="text/javascript">
-	function edit() {
+	function cancelEdit(index) {
+		$(".data_editor:eq(" + index + ")").css("display", "none");
+	}
+	function edit(index,tempId,temptime) {
+		var checkId = "";
+		var checkTime = "";
+		var parent=$(".data_editor:eq(" + index + ")");
+		parent.css("display", "block");
+		parent.find('[id=m_uid]').val(tempId);
+		parent.find('[id=m_time]').val(temptime);
+	}
+	function fcOk(index,brandId) {
+		var checkId = "";
+		var checkTime = "";
+		var parent=$(".data_editor:eq(" + index + ")");
+	//	checkId=parent.children('[id=m_uid]').val();
+		//checkTime=parent.children('[id=m_time]').val();
+		checkId=parent.find('[id=m_uid]').val();
+		checkTime=parent.find('[id=m_time]').val();
+	//	alert("uid="+checkId+"&nbsp;&nbsp;checkTime="+checkTime+"&nbsp;&nbsp;brandId="+brandId);
+		//$(".data_editor:eq(" + id + ")").css("display", "block");
+		//	$()[id].css("display", "block");
+		commitModify(brandId,checkId,checkTime);
+	}
+
+	function commitModify(id, checkId, checkTime) {
+		var mUrl = "./DataController?";
+		mUrl += "checkID=" + checkId;
+		mUrl += "&id=" + id;
+		mUrl += "&checkTime=" + checkTime;
+		$.ajax({
+			url : mUrl,
+			type : "get",
+			success : function(res) {
+				console.log(id + " updateRes=" + res);
+				if ("1" == res) {
+					alert("更新成功");
+					window.location.reload()
+				} else {
+					alert("更新失败");
+				}
+			},
+			error : function(p1, p2, p2) {
+				alert("更新失败,网络错误，" + p1);
+			}
+		});
 
 	}
 </script>
@@ -31,12 +76,49 @@ table {
 
 th {
 	border-bottom: solid 2px;
-	min-width: 100px;
+	min-width: 70px;
 }
 
 tr td {
 	line-height: 50px;
 	border-bottom: solid 1px;
+}
+
+.data_editor_wrapper {
+	width: 100px;
+	overflow: visible;
+}
+
+.data_editor {
+	position: relative;
+	font-size: 20px;
+	display: none;
+	line-height: 1.5em;
+	border: solid 1px #00BCD4;
+	box-shadow: 2px 2px 6px 0px;
+	padding: 5px 5px;
+	line-height: 1.5em;
+	background: white;
+	width: 310px;
+	left: -290px;
+	top: 90px;
+}
+
+.data_editor p {
+	margin: 5px 0;
+	color: red;
+}
+
+.data_editor input {
+	width: 146px;
+	height: 40px;
+	font-size: 20px;
+}
+
+.data_editor input[type=button] {
+	background: #00b2ce;
+	color: white;
+	width: 110px;
 }
 </style>
 </head>
@@ -109,11 +191,30 @@ tr td {
 				<a href="javascript:edit()">编辑</a>
 			</div> --%>
 			<tr>
+
 				<td><%=id%></td>
 				<td><%=Name%></td>
 				<td><%=CheckID%></td>
 				<td><%=CheckTime%></td>
-				<td><a href="javascript:edit()">编辑</a></td>
+				<td><a
+					href="javascript:edit(<%=i%>,'<%=CheckID%>','<%=CheckTime%>')">编辑</a>
+					<div class="data_editor_wrapper">
+						<div class="data_editor">
+							<p>待修改</p>
+							<!-- 			名称：<input id="m_name" placeholder="名称"></input> -->
+							审核人id：<input id="m_uid" placeholder="审核人"></input>
+							<div>
+								待审核时间(分)：<input id="m_time"
+									oninput="value=value.replace(/[^\d]/g,'')"
+									placeholder="待审核时间(分)">
+							</div>
+							<div>
+								<input id="m_ok" type="button" value="完成"
+									onclick="fcOk(<%=i%>,'<%=id%>')"> <input id="m_cancel"
+									type="button" onclick="cancelEdit(<%=i%>)" value="取消">
+							</div>
+						</div>
+					</div></td>
 			</tr>
 			<%
 				}
@@ -123,7 +224,6 @@ tr td {
 
 					}
 			%>
-
 		</table>
 		<%
 			}

@@ -3,6 +3,7 @@ import java.io.IOException;
 import java.util.LinkedHashMap;
 
 import org.xmlpull.v1.XmlPullParserException;
+
 public class ChuKuServer{
 	private static String serverName = WebserviceUtils.ChuKuServer;
 	public static String GetChuKuTongZhiInfoList(String checkWord,String uid,String stime,String etime,String pid,String partNo)throws IOException, XmlPullParserException {
@@ -280,6 +281,33 @@ public class ChuKuServer{
 		properties.put("checkID", checkID);
 		properties.put("checkTime", checkTime);
 		return WebserviceUtils.getWcfResult(properties, "SetMFCCheckInfo", serverName);
+	}
+
+	public static String GetVChuKuTongZhiBuID(String uid,String pid)throws IOException, XmlPullParserException {
+		LinkedHashMap<String, Object> properties = new LinkedHashMap<>();
+		properties.put("uid", uid);
+		properties.put("pid", pid);
+		return WebserviceUtils.getWcfResult(properties, "GetVChuKuTongZhiBuID", serverName);
+	}
+
+	public static String GetVChuKuTongZhi2(String uid,String partno,String pid,String cj,boolean isCheck)throws IOException, XmlPullParserException {
+		LinkedHashMap<String, Object> properties = new LinkedHashMap<>();
+		properties.put("uid", uid);
+		properties.put("partno", partno);
+		properties.put("pid", pid);
+		properties.put("cj", cj);
+		properties.put("isCheck", isCheck);
+		return WebserviceUtils.getWcfResult(properties, "GetVChuKuTongZhi2", serverName);
+	}
+
+	public static String UpdateMFCCheckInfo(String pid,String mxID,String uid,String checkinfo,boolean IsOk)throws IOException, XmlPullParserException {
+		LinkedHashMap<String, Object> properties = new LinkedHashMap<>();
+		properties.put("pid", pid);
+		properties.put("mxID", mxID);
+		properties.put("uid", uid);
+		properties.put("checkinfo", checkinfo);
+		properties.put("IsOk", IsOk);
+		return WebserviceUtils.getWcfResult(properties, "UpdateMFCCheckInfo", serverName);
 	}
 
 }

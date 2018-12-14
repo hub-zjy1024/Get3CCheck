@@ -51,13 +51,9 @@ public class LoginChecker extends HttpServlet {
 			response.sendRedirect(request.getContextPath() + "/login.html");
 		} else {
 			Cookie cId = new Cookie("wxid", uid);
-			cId.setMaxAge(30 *24* 60 * 60);
+			cId.setMaxAge(30 * 24 * 60 * 60);
 			response.addCookie(cId);
-			response.sendRedirect(request.getContextPath() + "/MfcSearch.jsp");
-			//			response.sendRedirect("http://oa.wl.net.cn:8399/MfcSearch.jsp");
-			//response.getWriter().append("当前用户ID为：" + uid);
-			//	response.sendRedirect("http://www.baidu.com");
-			//response.sendRedirect("http://www.baidu.com");
+			response.sendRedirect(request.getContextPath() + "/NavPage.jsp");
 		}
 	}
 
