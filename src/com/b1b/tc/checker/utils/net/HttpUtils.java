@@ -57,6 +57,7 @@ public class HttpUtils {
 		}
 		InputStream in = conns.getInputStream();
 		String res = StreamRead.readFrom(in);
+	//	System.out.println("from:"+urlstr+"\nres="+res);
 		return res;
 	}
 

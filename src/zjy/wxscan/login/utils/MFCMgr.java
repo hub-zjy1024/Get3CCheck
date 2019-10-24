@@ -12,6 +12,7 @@ import org.xmlpull.v1.XmlPullParserException;
 
 import sun.tools.jar.resources.jar;
 import zjy.wxscan.login.entity.CheckInfo;
+import zjy.wxscan.login.utils.wcf.ChuKuServer;
 
 public class MFCMgr {
 
@@ -125,8 +126,9 @@ public class MFCMgr {
 		List<CheckInfo> list = GetVChuKuTongZhi2List(uid, partno, pid, cj, isCheck);
 		if (list != null) {
 			try {
-				fJson = String.format(rJson, 1, (String) JSONObject.wrap(list));
+				fJson = String.format(rJson, 1, JSONObject.wrap(list).toString());
 			} catch (Exception e) {
+				mLogger.warning("\nJsonEx=" + e.getMessage() + "\nlistSize=" + list.size());
 				fJson = String.format(rJson, 0, "\"查询失败," + e.getMessage() + "\"");
 			}
 		} else {
@@ -141,6 +143,11 @@ public class MFCMgr {
 		try {
 			List<CheckInfo> list = new ArrayList<>();
 			jsondata = ChuKuServer.GetVChuKuTongZhi2(uid, partno, pid, cj, isCheck);
+			if ("101".equals(uid)) {
+			//	jsondata = "{\"表\":[{\"PID\":\"1316440\",\"制单日期\":\"2018/12/8 11:56:00\",\"公司\":\"总公司\",\"部门\":\"公司\",\"员工\":\"管理员\",\"制单人\":\"管理员\",\"单据类型\":\"正常销售\",\"单据状态\":\"等待分公司经理审批\",\"发货类型\":\"库房发货\",\"型号\":\"TEST201800206002\",\"数量\":\"1\",\"进价\":\"1.0000\",\"售价\":\"10.0000\",\"成本\":\"1.0000\",\"销售额\":\"10.0000\",\"厂家\":\"718\",\"封装\":\"封装\",\"描述\":\"描述\",\"明细备注\":\"\",\"所属部门\":\"公司\",\"客户编码\":\"101.001\",\"客户\":\"何华荣测试公司\",\"IsForeignClient\":\"False\",\"开票公司\":\"\",\"审核截止时间\":\"2018-12-15 12:15:44\"}]}";
+				jsondata = "{\"表\":[{\"PID\":\"1316440\",\"制单日期\":\"2018/12/8 11:56:00\",\"公司\":\"总公司\",\"部门\":\"公司\",\"员工\":\"管理员\",\"制单人\":\"管理员\",\"单据类型\":\"正常销售\",\"出库库房\":\"测试\",\"InvoiceType\":\"3\",\"明细ID\":\"2507079\",\"单据状态\":\"等待总公司审批\",\"发货类型\":\"库房发货\",\"型号\":\"TEST201800206002\",\"数量\":\"1\",\"进价\":\"1.0000\",\"售价\":\"10.0000\",\"成本\":\"1.0000\",\"销售额\":\"10.0000\",\"厂家\":\"718\",\"封装\":\"封装\",\"描述\":\"描述\",\"明细备注\":\"\",\"所属部门\":\"公司\",\"客户编码\":\"101.001\",\"客户\":\"何华荣测试公司\",\"IsForeignClient\":\"False\",\"最后更新时间\":\"\",\"开票公司\":\"普通发票\",\"审核截止时间\":\"2019-12-15 12:15:44\"}] }";
+			}
+			mLogger.warning("\nSearchJson=" + jsondata);
 			//jsondata = "{\"表\":[{\"PID\":\"1316440\",\"制单日期\":\"2018/12/8 11:56:00\",\"公司\":\"总公司\",\"部门\":\"公司\",\"员工\":\"管理员\",\"制单人\":\"管理员\",\"单据类型\":\"正常销售\",\"单据状态\":\"等待分公司经理审批\",\"发货类型\":\"库房发货\",\"型号\":\"TEST201800206002\",\"数量\":\"1\",\"进价\":\"1.0000\",\"售价\":\"10.0000\",\"成本\":\"1.0000\",\"销售额\":\"10.0000\",\"厂家\":\"718\",\"封装\":\"封装\",\"描述\":\"描述\",\"明细备注\":\"\",\"所属部门\":\"公司\",\"客户编码\":\"101.001\",\"客户\":\"何华荣测试公司\",\"IsForeignClient\":\"False\",\"开票公司\":\"\",\"审核截止时间\":\"2018-12-15 12:15:44\"}]}";
 			JSONObject jobj = new JSONObject(jsondata);
 			JSONArray jArr = jobj.getJSONArray("表");
@@ -175,10 +182,12 @@ public class MFCMgr {
 				String IsForeignClient = tobj.getString("IsForeignClient");
 				String kaipiaoComp = tobj.getString("开票公司");
 				String checkDeadLine = tobj.getString("审核截止时间");
+				String detailId = tobj.getString("明细ID");
 				CheckInfo info = new CheckInfo(PID, createDate, compName, deptName, epName,
 						createPerson, type, state, fahuoType, partno2, counts, inPrice, outPrice,
 						basePrice, soldCounts, factory, fengzhuang, description, belongDept,
 						customerID, customerName, IsForeignClient, kaipiaoComp, checkDeadLine);
+				info.setMxId(detailId);
 				list.add(info);
 			}
 			return list;

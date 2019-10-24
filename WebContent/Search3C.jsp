@@ -355,11 +355,13 @@ td .tb_price_fd {
 			Cookie[] cks = request.getCookies();
 			String uid = "";
 			String uname = "";
-			for (Cookie c : cks) {
-				if (c.getName().equals("uid")) {
-					uid = c.getValue();
-				} else if (c.getName().equals("uname")) {
-					uname = c.getValue();
+			if(cks!=null){
+				for (Cookie c : cks) {
+					if (c.getName().equals("uid")) {
+						uid = c.getValue();
+					} else if (c.getName().equals("uname")) {
+						uname = c.getValue();
+					}
 				}
 			}
 			if (uid.equals("") || uname.equals("")) {
@@ -469,7 +471,7 @@ td .tb_price_fd {
 								String msg = object.getString("data");
 					%>
 					<script type="text/javascript">
-						alert('查询错误,' +'<%=msg%>');
+						alert('<%=msg%>');
 					</script>
 					<%
 						}
@@ -478,8 +480,7 @@ td .tb_price_fd {
 							jspLogger.warning("Response Json Error,\n" + res);
 					%>
 					<script type="text/javascript">
-						alert('查询错误,' +'<%=res%>
-						');
+						alert('查询错误,' +'<%=res%>');
 					</script>
 					<%
 						}

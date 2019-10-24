@@ -1,12 +1,7 @@
 package zjy.wxscan.login;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import com.b1b.tc.checker.utils.net.StreamRead;
 
 public class WxScanLogin {
 	String WX_SCAN_CODE_URL = "https://open.weixin.qq.com/connect/qrconnect?appid={APPID}&redirect_uri={REUTL}&response_type=code&scope=snsapi_login&state={STATE}#wechat_redirect";

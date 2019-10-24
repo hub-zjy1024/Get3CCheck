@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE log4j:configuration SYSTEM "log4j.dtd">
+<log4j:configuration xmlns:log4j='http://jakarta.apache.org/log4j/'>
+	<appender name="normarl_console_Appender" class="org.apache.log4j.ConsoleAppender">
+		<param name="encoding" value="UTF-8" />
+		<param name="target" value="System.out" />
+		<param name="threshold" value="INFO" />
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern" value="%d{HH:mm:ss,SSS} [%p] [%t] %c.%M %m%n" />
+		</layout>
+	</appender>
+
+	<appender name="DailyRolling_FIle_Appender" class="org.apache.log4j.DailyRollingFileAppender">
+		<param name="file" value="${catalina.home}/exlogs/Get3CCheck.log" />
+		<param name="append" value="true" />
+		<param name="encoding" value="UTF-8" />
+		<param name="threshold" value="WARN" />
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern" value="%d{MM-dd HH:mm:ss,SSS} [%p] [%t] %c.%M %m%n" />
+		</layout>
+	</appender>
+	<appender name="RollingFile_FileSize_Appender" class="org.apache.log4j.RollingFileAppender">
+		<param name="file" value="${catalina.home}/exlogs/Get3CCheck_warn.log" />
+		<param name="append" value="true" />
+		<param name="maxFileSize" value="512000" />
+		<param name="threshold" value="WARN" />
+		<param name="encoding" value="UTF-8" />
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern" value="%d{YYYY-MM-dd HH:mm:ss,SSS} [%p] [%t] %c.%M %m%n" />
+		</layout>
+	</appender>
+	<appender name="RollingFile_FileSize_Appender_checkin" class="org.apache.log4j.RollingFileAppender">
+		<param name="file" value="${catalina.home}/exlogs/Get3CCheck_checkin.log" />
+		<param name="append" value="true" />
+		<param name="maxFileSize" value="512000" />
+		<param name="threshold" value="info" />
+		<param name="encoding" value="UTF-8" />
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern" value="%d{YYYY-MM-dd HH:mm:ss,SSS} [%p] [%t] %c.%M %m%n" />
+		</layout>
+	</appender>
+	<appender name="contactmgr_FileSize_Appender" class="org.apache.log4j.RollingFileAppender">
+		<param name="file"
+			value="${catalina.home}/exlogs/Get3CCheck_contactmgr_warn.log" />
+		<param name="append" value="true" />
+		<param name="maxFileSize" value="512000" />
+		<param name="threshold" value="INFO" />
+		<param name="encoding" value="UTF-8" />
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern" value="%d{YYYY-MM-dd HH:mm:ss,SSS} [%p] [%t] %c.%M %m%n" />
+		</layout>
+	</appender>
+
+	<appender name="stdout_file_Appender" class="org.apache.log4j.RollingFileAppender">
+		<param name="file" value="${catalina.home}/exlogs/Get3CCheck_Server.log" />
+		<param name="encoding" value="UTF-8" />
+		<param name="threshold" value="INFO" />
+		<param name="maxBackupIndex" value="5" />
+		<param name="maxFileSize" value="512000" />
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern" value="%d{YYYY-MM-dd HH:mm:ss,SSS} [%p] [%t] %C.%M %m%n" />
+		</layout>
+	</appender>
+	<!-- 根logger的设置 -->
+	<!-- <root> <level value="INFO" /> <appender-ref ref="stdout_file_Appender" 
+		/> </root> -->
+	<logger name="stdout_file" additivity="true">
+		<level value="INFO" />
+		<appender-ref ref="stdout_file_Appender" />
+		<appender-ref ref="normarl_console_Appender" />
+	</logger>
+	<logger name="zjy.wxscan.login" additivity="true">
+		<level value="INFO" />
+		<appender-ref ref="stdout_file_Appender" />
+		<appender-ref ref="RollingFile_FileSize_Appender" />
+		<appender-ref ref="normarl_console_Appender" />
+	</logger>
+	<logger name="zjy.wxscan.login.LoginChecker" additivity="true">
+		<level value="INFO" />
+		<appender-ref ref="stdout_file_Appender" />
+		<appender-ref ref="RollingFile_FileSize_Appender" />
+		<appender-ref ref="normarl_console_Appender" />
+	</logger>
+
+	<logger name="com.b1b.js.checkin" additivity="false">
+		<appender-ref ref="normarl_console_Appender" />
+		<appender-ref ref="RollingFile_FileSize_Appender_checkin" />
+	</logger>
+</log4j:configuration>

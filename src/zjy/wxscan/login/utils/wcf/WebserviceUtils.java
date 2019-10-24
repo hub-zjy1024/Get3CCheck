@@ -1,4 +1,4 @@
-package zjy.wxscan.login.utils;
+package zjy.wxscan.login.utils.wcf;
 
 import java.io.IOException;
 import java.util.Iterator;
@@ -149,11 +149,14 @@ public class WebserviceUtils {
 	 */
 	public static SoapObject getRequest(LinkedHashMap<String, Object> properties, String method) {
 		SoapObject request = new SoapObject(WebserviceUtils.NAMESPACE, method);
+		System.out.println("call "+method);
 		if (properties != null) {
 			// 设定参数
 			Set<String> set = properties.keySet();
 			for (String string : set) {
 				request.addProperty(string, properties.get(string));
+				System.out.println(
+						String.format("param-value='%s' - '%s'", string, properties.get(string)));
 			}
 		}
 		return request;

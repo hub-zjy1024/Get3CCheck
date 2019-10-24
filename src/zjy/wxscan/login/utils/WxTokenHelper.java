@@ -1,7 +1,8 @@
-package zjy.wxscan.login;
+package zjy.wxscan.login.utils;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.logging.Logger;
@@ -21,6 +22,8 @@ public class WxTokenHelper {
 	public static int agentID = -1;
 	public static boolean isFirst = true;
 	private static Logger mLogger = Logger.getLogger("WxTokenHelper");
+	public static final String DEF_tokenPath = "/home/webData/Wx_ScanLogin/";
+	public static final String DEF_tokenFileName = "wxNormalToken.txt";
 
 	//	GET（HTTPS）
 	//	请求URL：https://qyapi.weixin.qq.com/cgi-bin/gettoken?corpid=ID&corpsecret=SECRECT
@@ -98,11 +101,17 @@ public class WxTokenHelper {
 		if (req != null) {
 			rootPath = req.getServletContext().getRealPath("");
 		}
-		String tokenPath = rootPath + "wxToken.txt";
+		String tokenPath = DEF_tokenPath + DEF_tokenFileName;
 		File file = new File(tokenPath);
 		if (file.exists()) {
 			file.delete();
 		}
+	}
+
+	public synchronized static String getContactToken() throws IOException {
+		String corpId = "wx3636754f0b243b3f";
+		String contactSecret = "Kh5VLNgARsF5ptHaxTvi0WMN694TQiQJOq9jNCGloHI";
+		return getToken(null, corpId, contactSecret);
 	}
 
 	public static void main(String[] args) {
@@ -151,12 +160,7 @@ public class WxTokenHelper {
 		String acUrl = String.format(
 				"https://qyapi.weixin.qq.com/cgi-bin/gettoken?corpid=%s&corpsecret=%s", corpid,
 				corpsecret);
-		String tokenPath = "";
-		if (req != null) {
-			tokenPath = req.getServletContext().getRealPath("wxToken.txt");
-		} else {
-			tokenPath = "/home/webData/Wx/wxToken.txt";
-		}
+		String tokenPath = DEF_tokenPath + DEF_tokenFileName;
 		File file = new File(tokenPath);
 		if (!file.getParentFile().exists()) {
 			file.getParentFile().mkdirs();
@@ -168,20 +172,29 @@ public class WxTokenHelper {
 			JSONObject obj = new JSONObject(tokenJson);
 			token = obj.getString("access_token");
 			token_expires = obj.getLong("endTime");
+
 			if (System.currentTimeMillis() >= token_expires) {
-				mLogger.info(String.format("Token expired"));
-				//file.delete();
-				//	return getToken(req, corpid, corpsecret);
-				throw new Exception("wxToken expired");
+				//				mLogger.warning(String.format("Token expired,expired at '%s' now='%s'",
+				//						new Date(token_expires).toLocaleString(), new Date().toLocaleString()));
+				//				file.delete();
+				//				return getToken(req, corpid, corpsecret);
+				SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
+				String startTime = sdf.format(new Date(token_expires));
+				String endTime = sdf.format(new Date());
+				String msg = String.format("Token expired,expired at '%s' now='%s'", startTime,
+						endTime);
+				throw new IOException(msg);
 			} else {
 				return token;
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
+			mLogger.warning(String.format("get newToken error, %s'", e.getMessage()));
+			file.delete();
 			try {
 				return tokenHttp(acUrl, tokenPath);
 			} catch (Exception e2) {
-				mLogger.info(String.format("get newToken error, '%s'", e2.getMessage()));
+				mLogger.warning(String.format("get newToken error2, '%s'", e2.getMessage()));
 			}
 		}
 		return token;

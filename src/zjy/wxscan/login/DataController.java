@@ -1,4 +1,4 @@
-package com.b1b.tc.checker.servlet;
+package zjy.wxscan.login;
 
 import java.io.IOException;
 import javax.servlet.ServletException;
@@ -7,21 +7,21 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.b1b.tc.checker.mgr.DataInterface;
-import com.b1b.tc.checker.mgr.DataPro;
+import zjy.wxscan.login.utils.MFCMgr;
 
 /**
- * Servlet implementation class GetDetailInfoServlet
+ * Servlet implementation class DataControler
  */
-@WebServlet("/GetDetailInfoServlet")
-public class GetDetailInfoServlet extends HttpServlet {
+@WebServlet("/DataController")
+public class DataController extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
 	/**
 	 * @see HttpServlet#HttpServlet()
 	 */
-	public GetDetailInfoServlet() {
+	public DataController() {
 		super();
+		// TODO Auto-generated constructor stub
 	}
 
 	/**
@@ -29,13 +29,21 @@ public class GetDetailInfoServlet extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		response.setContentType("text/html;charset=utf-8");
-		response.setCharacterEncoding("utf-8");
-		String id = request.getParameter("id");
-		String type = request.getParameter("type");
-		DataInterface dataPro = new DataPro();
-		String detail = dataPro.getDetail(id, type);
-		response.getWriter().append(detail);
+		// TODO Auto-generated method stub
+
+		String id;
+		String checkID;
+		String checkTime;
+		id = request.getParameter("id");
+		checkID = request.getParameter("checkID");
+		checkTime = request.getParameter("checkTime");
+		MFCMgr mgr = new MFCMgr();
+		String res = mgr.SetMFCCheckInfo(id, checkID, checkTime);
+		if ("保存成功".equals(res)) {
+			response.getWriter().append("1");
+		} else {
+			response.getWriter().append("0");
+		}
 	}
 
 	/**

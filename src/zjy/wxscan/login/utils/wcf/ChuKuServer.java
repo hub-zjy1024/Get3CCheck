@@ -1,4 +1,4 @@
-package zjy.wxscan.login.utils;
+package zjy.wxscan.login.utils.wcf;
 import java.io.IOException;
 import java.util.LinkedHashMap;
 

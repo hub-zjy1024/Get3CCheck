@@ -14,6 +14,7 @@ public class DataPro implements DataInterface {
 
 	public static String host = "http://172.16.6.160:810";
 	private boolean isDebug = false;;
+	String key = "123123";
 
 	public String getData(String partno) {
 		if ("".equals(partno) || partno == null) {
@@ -27,13 +28,14 @@ public class DataPro implements DataInterface {
 		String json = "{\"code\":0,\"data\":\"未知错误\"}";
 		try {
 			//http://172.16.6.160:810/Digikey/Get3CCheck?partno=MPC8377EWLANA
-			url = host + "/Digikey/Get3CCheck?partno=" + URLEncoder.encode(partno, "utf-8");
+			url = host + "/Digikey/Get3CCheck?partno=" + URLEncoder.encode(partno, "utf-8")
+					+ "&Key=" + URLEncoder.encode(key, "utf-8");
 			result = HttpUtils.getGetResult(url, null);
 			json = "{\"code\":1,\"data\":" + result + "}";
 			if ("[]".equals(result)) {
 				json = getErrorJson("查询不到数据");
 			} else if (result != null && !result.startsWith("[")) {
-				json = getErrorJson(result);
+				json = getErrorJson("接口调用失败," + result);
 			}
 		} catch (UnsupportedEncodingException e1) {
 			json = getErrorJson(e1.getMessage());
@@ -64,10 +66,12 @@ public class DataPro implements DataInterface {
 		if (isDebug) {
 			host = "http://192.168.10.20:8117";
 		}
+
 		String json = "";
 		try {
 			String query = "id=" + URLEncoder.encode(id, "utf-8");
-			query += "&type=" + URLEncoder.encode(type, "utf-8");
+			query += "&type=" + URLEncoder.encode(type, "utf-8") + "&Key="
+					+ URLEncoder.encode(key, "utf-8");
 
 			String url = host + "/Digikey/GetChecksDetail?" + query;
 			String result = HttpUtils.getGetResult(url, null);
@@ -102,7 +106,8 @@ public class DataPro implements DataInterface {
 			query += "&type=" + URLEncoder.encode(type, "utf-8");
 			query += "&uid=" + URLEncoder.encode(uid, "utf-8");
 			query += "&uname=" + URLEncoder.encode(uname, "utf-8");
-			String url = host + "/Digikey/InsertZDYInfo" + query;
+			String url = host + "/Digikey/InsertZDYInfo" + query + "&Key="
+					+ URLEncoder.encode(key, "utf-8");
 			String result = HttpUtils.getGetResult(url, null);
 			if ("保存成功".equals(result)) {
 				json = "{\"code\":1,\"data\":\"" + result + "\"}";
@@ -126,7 +131,8 @@ public class DataPro implements DataInterface {
 		try {
 			query += "uid=" + URLEncoder.encode(uid, "utf-8");
 			query += "&pwd=" + URLEncoder.encode(pwd, "utf-8");
-			String url = host + "/Digikey/LoginInfo" + query;
+			String url = host + "/Digikey/LoginInfo" + query+ "&Key="
+					+ URLEncoder.encode(key, "utf-8");
 			String result = HttpUtils.getGetResult(url, null);
 			json = "{\"code\":1,\"data\":" + result + "}";
 			if ("[]".equals(result)) {
